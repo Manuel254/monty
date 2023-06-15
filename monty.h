@@ -1,6 +1,34 @@
 #ifndef MONTY_H
 #define MONTY_H
 
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+#define  _POSIX_C_SOURCE 200809L
+
+#define INSTRUCTIONS              \
+	{                           \
+		{"push", push},       \
+		    {"pall", pall},   \
+		    {"pint", pint},   \
+		    {"pop", pop},     \
+		    {"swap", swap},   \
+		    {"nop", nop},     \
+		    {"div", _div},    \
+		    {"mul", _mul},    \
+		    {"add", _add},    \
+		    {"sub", _sub},    \
+		    {"mod", mod},     \
+		    {"pchar", pchar}, \
+		    {"pstr", pstr},   \
+		    {"rotl", rotl},   \
+		    {"rotr", rotr},   \
+		{                     \
+			NULL, NULL      \
+		}                     \
+	}
+
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
  * @n: integer
@@ -30,5 +58,36 @@ typedef struct instruction_s
 	char *opcode;
 	void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
+
+/**
+* struct help - argument for the current opcode
+* @data_struct: stack mode, stack (default) and queue
+* @argument: the arguments of the string
+*
+* Description: global structure used to pass data around the functions easily
+*/
+typedef struct help
+{
+	int data_struct;
+	char *argument;
+} help;
+help global;
+
+stack_t *add_node(stack_t **stack, const int n);
+stack_t *queue_node(stack_t **stack, const int n);
+void free_stack(stack_t *stack);
+size_t print_stack(const stack_t *stack);
+
+void push(stack_t **stack, unsigned int line_cnt);
+void pall(stack_t **stack, unsigned int line_cnt);
+void pint(stack_t **stack, unsigned int line_cnt);
+void swap(stack_t **stack, unsigned int line_cnt);
+void pop(stack_t **stack, unsigned int line_cnt);
+void nop(stack_t **stack, unsigned int line_cnt);
+
+void opcode(stack_t **stack, char *str, unsigned int line_cnt);
+
+int is_digit(char *string);
+int isnumber(char *str);
 
 #endif /* #ifndef MONTY H */
