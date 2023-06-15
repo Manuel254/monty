@@ -1,76 +1,29 @@
 #include "monty.h"
-#define LINE_LEN 256
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
-void file_error(char *argv);
-void error_usage(void);
-int status = 0;
-
-/**
- * main - entry point
- * @argv: list of arguments passed to our program
- * @argc: amount of args
- *
- * Return: nothing
- */
-int main(int argc, char **argv) {
-    FILE *file;
-    char *buffer = NULL;
-    char *str = NULL;
-    stack_t *stack = NULL;
-    unsigned int line_cnt = 1;
-
-    global.data_struct = 1;
-    if (argc != 2)
-        error_usage();
-
-    file = fopen(argv[1], "r");
-
-    if (!file)
-        file_error(argv[1]);
-
-    while (fgets(buffer, LINE_LEN, file) != NULL) {
-        if (*buffer == '\n') {
-            line_cnt++;
-            continue;
-        }
-        str = strtok(buffer, " \t\n");
-        if (!str || *str == '#') {
-            line_cnt++;
-            continue;
-        }
-        global.argument = strtok(NULL, " \t\n");
-        opcode(&stack, str, line_cnt);
-        line_cnt++;
-    }
-    free(buffer);
-    free_stack(stack);
-    fclose(file);
-    exit(EXIT_SUCCESS);
-}
+char **op_toks = NULL;
 
 /**
- * file_error - prints file error message and exits
- * @argv: argv given by main()
+ * main - the entry point for Monty Interp
  *
- * Desc: print msg if  not possible to open the file
- * Return: nothing
+ * @argc: the count of arguments passed to the program
+ * @argv: pointer to an array of char pointers to arguments
+ *
+ * Return: (EXIT_SUCCESS) on success (EXIT_FAILURE) on error
  */
-void file_error(char *argv)
+int main(int argc, char **argv)
 {
-	fprintf(stderr, "Error: Can't open file %s\n", argv);
-	exit(EXIT_FAILURE);
-}
+	FILE *script_fd = NULL;
+	int exit_code = EXIT_SUCCESS;
 
-/**
- * error_usage - prints usage message and exits
- *
- * Desc: if user does not give any file or more than
- * one argument to your program
- *
- * Return: nothing
- */
-void error_usage(void)
-{
-	fprintf(stderr, "USAGE: monty file\n");
-	exit(EXIT_FAILURE);
+	if (argc != 2)
+		return (usage_error());
+	script_fd = fopen(argv[1], "r");
+	if (script_fd == NULL)
+		return (f_open_error(argv[1]));
+	exit_code = run_monty(script_fd);
+	fclose(script_fd);
+	return (exit_code);
 }
