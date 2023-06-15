@@ -1,3 +1,9 @@
+/*
+ * File: monty_funcs_1.c
+ * Auth: Bennett Dixon
+ *       Brennan D Baraban
+ */
+
 #include "monty.h"
 
 void monty_push(stack_t **stack, unsigned int line_number);
